@@ -1,24 +1,7 @@
-# README
+# OpenGov Public API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+OpenGov automates the extraction of structure data from unstructured (or just differently-formatted) data on the web through a public API. OpenGov uses ML and a slew of workers to efficently scrape and parse data from large sets of web pages.
 
-Things you may want to cover:
+# Usage
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The public API is currently available at https://opengov-api.herokuapp.com
