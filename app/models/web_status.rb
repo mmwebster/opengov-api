@@ -1,0 +1,2 @@
+class WebStatus < ApplicationRecord
+end

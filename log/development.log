@@ -1,0 +1,16 @@
+Started GET "/api/v1/web-data" for 127.0.0.1 at 2017-07-14 10:37:49 -0700
+  [1m[35m (6.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Api::V1::WebDataController#index as JSON
+  [1m[36mWebDatum Load (6.3ms)[0m  [1m[34mSELECT "web_data".* FROM "web_data" ORDER BY "web_data"."id" ASC[0m
+[active_model_serializers] Rendered ActiveModel::Serializer::Null with Hash (0.6ms)
+Completed 200 OK in 38ms (Views: 7.1ms | ActiveRecord: 14.3ms)
+
+
+Started GET "/api/v1/web-data" for 127.0.0.1 at 2017-07-14 10:38:34 -0700
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Api::V1::WebDataController#index as JSON
+  [1m[36mWebDatum Load (0.7ms)[0m  [1m[34mSELECT "web_data".* FROM "web_data" ORDER BY "web_data"."id" ASC[0m
+[active_model_serializers] Rendered ActiveModel::Serializer::Null with Hash (0.16ms)
+Completed 200 OK in 28ms (Views: 3.7ms | ActiveRecord: 4.6ms)
+
+
