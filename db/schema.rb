@@ -10,29 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170713235402) do
+ActiveRecord::Schema.define(version: 20170715202424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "api_v1_web_data", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "api_v1_web_statuses", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "web_data", force: :cascade do |t|
+    t.string "key"
+    t.string "value_s"
+    t.integer "value_i"
+    t.float "value_f"
+    t.bigint "web_data_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["web_data_id"], name: "index_web_data_on_web_data_id"
+  end
+
+  create_table "web_datum_related_keys", force: :cascade do |t|
+    t.integer "web_datum_id"
+    t.integer "related_key_id"
   end
 
   create_table "web_statuses", force: :cascade do |t|
+    t.string "url"
+    t.boolean "is_parsed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "web_data", "web_data", column: "web_data_id"
 end
