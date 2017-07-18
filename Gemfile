@@ -18,6 +18,8 @@ gem 'puma', '~> 3.7'
 gem 'jsonapi-resources', '~> 0.8.0.beta2'
 # general purpose serializer
 gem 'active_model_serializers', '~> 0.10.0'
+# background workers
+gem 'sidekiq'
 
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
