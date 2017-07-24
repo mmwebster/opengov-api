@@ -132,6 +132,7 @@ def parse_tables(url)
 
 
     table_data = Array.new(num_body_rows){Array.new($final_span)}
+    datums = Array.new(num_body_rows){Array.new($final_span)}
 
     for i in 0..(num_body_rows - 1)
 
@@ -181,39 +182,38 @@ def parse_tables(url)
         end
 
         #FOR DANIEL, Here are the locations to hash for key: value
-        #logger.info "Row # is stored at index 0:  #{table_data[i][j][0]}"
-        #logger.info "The value is stored at index 1: #{table_data[i][j][1]}"
-        #logger.info "The header key associated with it is the col_header: #{col_header}"
+        logger.info "The value is: #{table_data[i][j][1]}"
+        logger.info "The key is: #{col_header}"
+
+        #datums[i][j] = WebDatum.create(url:url, key:col_header, value_s:table_data[i][j][1])
 
       end
     end
 
-    # If valid headers exist, then for each one...
-    for i in 0...(table_rows.length - 1)
-      # Insert a new row-subarray to the appropriate list of rows
-      if(i < num_header_rows) then table_headers.push([])
-      else table_data.push([])
-      end
+=begin
+    num_body_rows.times do |i|
 
-      # Add all the text to the row-subarray
-      table.css('tr').css('th, td').map do |datum|
-        if(i < num_header_rows) then table_headers[i].push(datum.text.strip)
-        else table_data[i - num_header_rows].push(datum.text.strip)
+      datum[i].each do |web_datum|
+
+        datum[i].each do |other_web_datum|
+
+          if not web_datum.id.equal? other_web_datum.id
+
+            web_datum.related_keys << other_web_datum
+
+          end
+
         end
-      end
-    end
 
-    table_hashes.push({
-      'headers' => table_headers,
-      'data'    => table_data,
-    })
+      end
+
+    end
+=end
 
     table_counter += 1
     logger.info "\n#{$potential_bad_table_data}\n"
 
   end
-
-  return table_hashes
 
 end
 
