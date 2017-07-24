@@ -21,8 +21,9 @@ class ScraperParserWorker
 #############Parser work is done below###########
 
 def string_clean(string)
-  string.delete("\n")
+
   string.split.join(" ")
+
 end
 
 def parse_tables(url)
@@ -132,7 +133,7 @@ def parse_tables(url)
 
 
     table_data = Array.new(num_body_rows){Array.new($final_span)}
-    datums = Array.new(num_body_rows){Array.new($final_span)}
+    datum = Array.new(num_body_rows){Array.new($final_span)}
 
     for i in 0..(num_body_rows - 1)
 
@@ -181,16 +182,11 @@ def parse_tables(url)
 
         end
 
-        #FOR DANIEL, Here are the locations to hash for key: value
-        logger.info "The value is: #{table_data[i][j][1]}"
-        logger.info "The key is: #{col_header}"
-
-        #datums[i][j] = WebDatum.create(url:url, key:col_header, value_s:table_data[i][j][1])
+        datum[i][j] = WebDatum.create(url:url, key:col_header, value_s:table_data[i][j][1])
 
       end
     end
 
-=begin
     num_body_rows.times do |i|
 
       datum[i].each do |web_datum|
@@ -208,10 +204,9 @@ def parse_tables(url)
       end
 
     end
-=end
 
     table_counter += 1
-    logger.info "\n#{$potential_bad_table_data}\n"
+    #logger.info "\n#{$potential_bad_table_data}\n"
 
   end
 
