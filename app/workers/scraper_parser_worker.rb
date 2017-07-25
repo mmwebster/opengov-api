@@ -21,13 +21,17 @@ class ScraperParserWorker
 #############Parser work is done below###########
 
 def string_clean(string)
+  str_data = { 'value': nil, 'type': nil }
   if string =~ /\d/
     # string contains digits, convert to float
-    string.to_f
+    str_data['value'] = string.to_f
+    str_data['type'] = 'float'
   else
     # string contains no digits, convert to lower-case
-    string.downcase
+    str_data['value'] = string.downcase
+    str_data['type'] = 'string'
   end
+  str_data
 end
 
 def parse_tables(url)
@@ -135,6 +139,7 @@ def parse_tables(url)
       for j in 0..($final_span - 1)
 
         col_header = table_header_array[num_header_rows - 1][j]
+        cell_value_data = {}
 
         if row_data[j] == nil
           table_data[i][j] =  body_index, ""
@@ -166,12 +171,24 @@ def parse_tables(url)
             $potential_bad_table_data = "The table was irregular and could contain incorrect data"
           end
           table_data[i][j] = body_index, "#{row_data[j].text}"
-          table_data[i][j][1] = string_clean(table_data[i][j][1])
+          cell_value_data = string_clean(table_data[i][j][1])
+          # table_data[i][j][1] = string_clean(table_data[i][j][1])
+        end
+
+        value_s = nil
+        value_f = nil
+
+        # set string or numeric value
+        if cell_value_data['type'] == 'string'
+          value_s = cell_value_data['value']
+        elsif cell_value_data['type'] == 'float'
+          value_f = cell_value_data['value']
         end
 
         datum[i][j] = WebDatum.create( url: url,
                                        key: col_header.downcase,
-                                       value_s: table_data[i][j][1] )
+                                       value_s: value_s,
+                                       value_f: value_f )
       end
     end
 
