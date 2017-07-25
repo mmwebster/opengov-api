@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170715202424) do
+ActiveRecord::Schema.define(version: 20170724180407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20170715202424) do
     t.bigint "web_data_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "url"
     t.index ["web_data_id"], name: "index_web_data_on_web_data_id"
   end
 
