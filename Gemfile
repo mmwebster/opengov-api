@@ -21,6 +21,8 @@ gem 'active_model_serializers', '~> 0.10.0'
 # background workers
 gem 'sidekiq'
 
+gem 'rails_12factor'
+gem 'json'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
