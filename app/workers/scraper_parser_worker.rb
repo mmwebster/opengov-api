@@ -21,8 +21,13 @@ class ScraperParserWorker
 #############Parser work is done below###########
 
 def string_clean(string)
-  string.delete("\n")
-  string.split.join(" ")
+  if string =~ /\d/
+    # string contains digits, convert to float
+    string.to_f
+  else
+    # string contains no digits, convert to lower-case
+    string.downcase
+  end
 end
 
 def parse_tables(url)
@@ -81,21 +86,16 @@ def parse_tables(url)
 
         colspan = check["colspan"]
         if (colspan.to_i > 1) && (check.text != nil)
-
           #go through the full width of the col span adding it to each required column index
           for k in ($span_check[i]..colspan.to_i + $span_check[i] - 1)
-
             #Append current text from current column into all subsequent lower rows
             for j in i ..(num_header_rows - 1)
-
               if table_header_array[j][k].to_s == ""
                 table_header_array[j][k] = "#{check.text}"
               else
                 table_header_array[j][k] = "#{table_header_array[j][k].to_s}.#{check.text}"
               end
-
               string_clean(table_header_array[j][k])
-
             end
           end
 
@@ -106,32 +106,25 @@ def parse_tables(url)
           #No phrase col span found or is exactly 1, let both increment by 1
           #first insert current phrase at location and append to all subsequent rows beneath
           for j in i ..(num_header_rows - 1)
-
             if table_header_array[j][$span_check[i]].to_s == ""
               table_header_array[j][$span_check[i]] = "#{check.text}"
             else
               table_header_array[j][$span_check[i]] = "#{table_header_array[j][$span_check[i]].to_s}.#{check.text}"
             end
-
             string_clean(table_header_array[j][$span_check[i]])
-
           end
-
           $span_check[i] = $span_check[i] + 1
-
         end
-
       end
 
       #final_span is the # of columns to search through
       if $final_span < $span_check[i]
         $final_span = $span_check[i]
       end
-
     end
 
-
     table_data = Array.new(num_body_rows){Array.new($final_span)}
+    datum = Array.new(num_body_rows){Array.new($final_span)}
 
     for i in 0..(num_body_rows - 1)
 
@@ -168,53 +161,34 @@ def parse_tables(url)
 
         #no head found, just do it normally
         else
-
           #Row data != num of columns, null spaces make it hard to align data
           if row_data.length != $final_span
             $potential_bad_table_data = "The table was irregular and could contain incorrect data"
           end
-
-          table_data[i][j] =  body_index, "#{row_data[j].text}"
-          string_clean(table_data[i][j][1])
-
-
+          table_data[i][j] = body_index, "#{row_data[j].text}"
+          table_data[i][j][1] = string_clean(table_data[i][j][1])
         end
 
-        #FOR DANIEL, Here are the locations to hash for key: value
-        #logger.info "Row # is stored at index 0:  #{table_data[i][j][0]}"
-        #logger.info "The value is stored at index 1: #{table_data[i][j][1]}"
-        #logger.info "The header key associated with it is the col_header: #{col_header}"
-
+        datum[i][j] = WebDatum.create( url: url,
+                                       key: col_header.downcase,
+                                       value_s: table_data[i][j][1] )
       end
     end
 
-    # If valid headers exist, then for each one...
-    for i in 0...(table_rows.length - 1)
-      # Insert a new row-subarray to the appropriate list of rows
-      if(i < num_header_rows) then table_headers.push([])
-      else table_data.push([])
-      end
-
-      # Add all the text to the row-subarray
-      table.css('tr').css('th, td').map do |datum|
-        if(i < num_header_rows) then table_headers[i].push(datum.text.strip)
-        else table_data[i - num_header_rows].push(datum.text.strip)
+    num_body_rows.times do |i|
+      datum[i].each do |web_datum|
+        datum[i].each do |other_web_datum|
+          if not web_datum.id.equal? other_web_datum.id
+            web_datum.related_keys << other_web_datum
+          end
         end
       end
     end
-
-    table_hashes.push({
-      'headers' => table_headers,
-      'data'    => table_data,
-    })
 
     table_counter += 1
-    logger.info "\n#{$potential_bad_table_data}\n"
+    #logger.info "\n#{$potential_bad_table_data}\n"
 
   end
-
-  return table_hashes
-
 end
 
 
