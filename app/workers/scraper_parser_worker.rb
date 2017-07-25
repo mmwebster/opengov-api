@@ -19,8 +19,23 @@ class ScraperParserWorker
 
 
 #############Parser work is done below###########
+def key_string_clean(string)
+  # convert to lower case
+  string = string.downcase
+  # replace spaces with dashes
+  string.gsub!(' ', '-')
+  # return
+  string
+end
 
 def string_clean(string)
+  # convert to lower case
+  string = string.downcase
+  # return
+  string
+end
+
+def value_clean(string)
   str_data = { 'value': nil, 'type': nil }
   if string =~ /\d/
     # string contains digits, convert to float
@@ -28,7 +43,7 @@ def string_clean(string)
     str_data['type'] = 'float'
   else
     # string contains no digits, convert to lower-case
-    str_data['value'] = string.downcase
+    str_data['value'] = string_clean(string)
     str_data['type'] = 'string'
   end
   str_data
@@ -99,7 +114,8 @@ def parse_tables(url)
               else
                 table_header_array[j][k] = "#{table_header_array[j][k].to_s}.#{check.text}"
               end
-              string_clean(table_header_array[j][k])
+              # NOTE: this isn't doing anything
+              value_clean(table_header_array[j][k])
             end
           end
 
@@ -115,7 +131,8 @@ def parse_tables(url)
             else
               table_header_array[j][$span_check[i]] = "#{table_header_array[j][$span_check[i]].to_s}.#{check.text}"
             end
-            string_clean(table_header_array[j][$span_check[i]])
+            # NOTE: this isn't doing anything
+            value_clean(table_header_array[j][$span_check[i]])
           end
           $span_check[i] = $span_check[i] + 1
         end
@@ -148,7 +165,8 @@ def parse_tables(url)
         elsif has_header[0].to_s != ""
 
           col_header = "#{col_header}.#{has_header[0].text}"
-          string_clean(col_header)
+          # NOTE: This isn't doing anything
+          value_clean(col_header)
 
           #Row data != num of columns, null spaces make it hard to align data
           if row_data.length != ($final_span - 1)
@@ -162,7 +180,8 @@ def parse_tables(url)
             table_data[i][j] = body_index, ""
           end
 
-          string_clean(table_data[i][j][1])
+          # NOTE: This isn't doing anything
+          value_clean(table_data[i][j][1])
 
         #no head found, just do it normally
         else
@@ -171,7 +190,7 @@ def parse_tables(url)
             $potential_bad_table_data = "The table was irregular and could contain incorrect data"
           end
           table_data[i][j] = body_index, "#{row_data[j].text}"
-          cell_value_data = string_clean(table_data[i][j][1])
+          cell_value_data = value_clean(table_data[i][j][1])
           # table_data[i][j][1] = string_clean(table_data[i][j][1])
         end
 
@@ -186,7 +205,7 @@ def parse_tables(url)
         end
 
         datum[i][j] = WebDatum.create( url: url,
-                                       key: col_header.downcase,
+                                       key: key_string_clean(col_header),
                                        value_s: value_s,
                                        value_f: value_f )
       end
